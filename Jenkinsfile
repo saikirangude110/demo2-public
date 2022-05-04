@@ -32,5 +32,14 @@ pipeline {
 	            sh 'mvn package'
 	         }
             }
+	    
+	 stage('Building image') {
+                steps {
+		script {
+		dockerImage = docker.build registry + ":v7.0"
+	        }
+	    }
+	}
+	    
     }
 }
