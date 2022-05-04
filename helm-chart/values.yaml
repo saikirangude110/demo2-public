@@ -1,0 +1,18 @@
+replicaCount: 1
+
+deployment:
+  metadata:
+    name: hello-world-deployment
+    labels:
+      app: hello-world
+
+spec:
+  image:
+    repository: saikirangude12/hello-world
+    pullPolicy: IfNotPresent
+    tag: v6.0
+
+service:
+  name: hello-world-service
+  type: LoadBalancer
+  port: 8080
