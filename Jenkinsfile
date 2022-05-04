@@ -13,43 +13,24 @@ pipeline {
           }
 	
     stages {
-	  stage('Building image') {
-          steps {
-		    script {
-		    dockerImage = docker.build registry + ":latest"
-	        }
+	    stage('Scm Checkout1') {
+		    steps {
+			    git 'https://github.com/saikirangude110/demo2-public.git'
+		 }
 	    }
-        }
 	    
-	  stage('Deploy Image') {
-          steps{
-            script {
-             docker.withRegistry( '', registryCredential ) {
-             dockerImage.push()
-          }
-        }
-      }
-    }
-
-	  stage('Clean Workspace') {
-          steps{
-            script {
-              sh 'docker rmi saikirangude12/hello-world:latest'
-          }
-        }
-      }
-
-        stage('Kubernetes Deployment') {
-        agent {
-        label 'Jenkins_Node1'
-        }
-            steps{
-	          git credentialsId: 'GitHub_Credentials', url: 'https://github.com/saikirangude110/Docker_Kubernetes_Deployment.git'
-              sh 'gcloud auth activate-service-account --key-file=demo1-346508-c6caaf27f6f9.json'
-	          sh 'gcloud container clusters get-credentials autopilot-cluster-1 --region us-central1 --project demo1-346508'
-              sh 'helm install ./cvhello-world --generate-name'
-        }
-		  }
-
+	    stage('Cleaning Old Build History') {
+		    steps {
+                echo "Packaging Code..."
+		        sh 'mvn clean'
+	         }
+	    }
+               
+        stage('Generating Artifact') {
+	        steps {
+                echo "Packaging Code..."
+	            sh 'mvn package'
+	         }
+            }
     }
 }
